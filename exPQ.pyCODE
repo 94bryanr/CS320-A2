@@ -31,47 +31,51 @@ def heapify(A, i, n):
   	A[i] is "almost a heap" (except root i), 
   	Make A[i] a heap 
   	"""
-	L = left(i)
-	R = right(i)
-	if ( L<=n and A[L]>A[i] ):
-		max = L
+	if ( i > n ):
+		return;
+	minIndex = i
+	lChildIndex = left(i)
+	rChildIndex = right(i)
+
+	#need to find MIN and stick it at the top!
+	if ( lChildIndex <= n and A[lChildIndex] < A[i] ):
+		minIndex = lChildIndex
 	else:
-		max = i
-	if ( R <= n and A[R] > A[max] ):
-		max = R
-	if max != i:
-		if max == L:
-			print "Swapping: " + str(left(i)) + " With: " + str(i)
+		minIndex = i
+	if ( rChildIndex <= n and A[rChildIndex] < A[minIndex] ):
+		minIndex = rChildIndex
+	if minIndex != i:
+		if minIndex == lChildIndex:
+			#print "Swapping Root Index: " + str(i) + " With Left Child Index: " + str(left(i))
 			swap( A, i, left(i))
-			heapify( A, left(i), n)
-			print A
-		if max == R:
-			print "Swapping: " + str(right(i)) + " With: " + str(i)
+		if minIndex == rChildIndex:
+			#print "Swapping Root Index: " + str(i) + " With Right Child Index: " + str(right(i))
 			swap(A, i, right(i))
-			heapify(A, right(i) ,n)
-			print A
+
+	heapify( A, left(i), n )
+	heapify( A, right(i), n )
 
 def buildHeap(A): 
 	# build a Min heap A from an unsorted array
-	n = hLen(A);
-	for i in range( int(n/2), 1, -1 ):
-		heapify(A,i,n)
+	heapify(A, 1, hLen(A))
 
 def heapExtractMin(A):
 	minVal = A[1]
 	A.pop(1)
+	buildHeap(A)
 	return minVal,A
 
 def heapInsert(A,v):
-	B = [v]
+	B = [None, v]
+	A.pop(0) # get rid of previous none
 	B.extend(A)
-  	return A
+	buildHeap(B)
+  	return B
 
 if __name__ == "__main__":
 	db = len(sys.argv)>2
    	A  = readNums(sys.argv[1])
    	if db: print "Input:", A[1:]
-	print A
    	buildHeap(A)
    	min,A = heapExtractMin(A)
    	print "min", min
